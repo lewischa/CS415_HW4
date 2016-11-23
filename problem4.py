@@ -22,15 +22,27 @@ class Node:
 		# 		if key_digits[i] != 0: return False
 		# 	return True
 
+	# Calculates and returns the weight of the edge that is
+	# currently being generated
+	def getEdgeWeight(self, key_digits, pos):
+		node_sum = 0
+		for digit in key_digits:
+			node_sum += digit
+		edge_weight = key_digits[pos] / node_sum
+		return edge_weight
+
 	def generateEdge(self, pos):
+		if type(self.key) is list:
+			self.key = self.key[0]
 		key_digits = [int(char) for char in self.key]
+		edge_weight = self.getEdgeWeight(key_digits, pos)
 		key_digits[pos] = key_digits[pos] - 1
 		pos = pos + 1
 		for digit in range(pos, len(key_digits)):
 			key_digits[digit] = key_digits[digit] + 1
 		edge = ''.join([str(digit) for digit in key_digits])
 		self.num_edges += 1
-		return edge
+		return [edge, edge_weight]
 
 	def populateEdges(self):
 		if self.isLastEdge(): return
@@ -54,7 +66,10 @@ class NodeQueue:
 
 	# Add to end of queue
 	def enqueue(self, key):
-		self.queue.append(key)
+		if type(key) is list:
+			self.queue.append(key[0])
+		else:
+			self.queue.append(key)
 
 	# Delete and return first element in queue
 	def dequeue(self):
@@ -64,6 +79,8 @@ class NodeQueue:
 
 	# Does the 'key' exist in the queue already? returns True/False
 	def isQueued(self, key):
+		if type(key) is list:
+			key = key[0]
 		for each in self.queue:
 			if each == key: return True
 		return False
@@ -82,8 +99,7 @@ class AdjacencyList:
 	def __init__(self, key):
 		self.adjList = []
 		self.nodeQueue = NodeQueue()
-		self.addFirst(key)
-		self.buildList()
+		self.initKey = key
 
 	# Add a node to the adjacency list
 	def addNode(self, key):
@@ -111,6 +127,7 @@ class AdjacencyList:
 
 	# Build the adjacency list after the first row
 	def buildList(self):
+		self.addFirst(self.initKey)
 		while not self.nodeQueue.isEmpty():
 			nextNode = self.nodeQueue.dequeue()
 			nextNode = self.addNode(nextNode)
@@ -118,6 +135,8 @@ class AdjacencyList:
 
 	# Find and return a node object based on its key
 	def find(self, key):
+		if type(key) is list:
+			key = key[0]
 		for each in self.adjList:
 			if each.key == key:
 				return each
@@ -131,6 +150,7 @@ class AdjacencyList:
 class Graph:
 	def __init__(self, key):
 		self.adjListObject = AdjacencyList(key)
+		self.adjListObject.buildList()
 		self.visited = []
 		self.stack = []
 		self.sorted = []
@@ -186,5 +206,6 @@ class Graph:
 
 
 x = Graph('1111')
-print(x.sorted)
+x.adjListObject.printList()
+# print(x.sorted)
 
