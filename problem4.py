@@ -1,3 +1,13 @@
+'''
+
+	CS 415 Homework 4, Problem 4
+
+	Jeremy Olsen
+	Carlos Downie
+	Chad Lewis
+
+'''
+
 
 # Node class is essentially one line of an adjacency list
 # Each Node has a key, such as '1111', to represent number of
